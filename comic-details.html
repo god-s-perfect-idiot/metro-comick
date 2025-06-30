@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button class="nav-back" onclick="goHome()">BACK</button>
+        
+        <header class="header">
+            <h1 class="title" id="comicTitle">COMIC TITLE</h1>
+        </header>
+
+        <main class="main-content">
+            <section class="comic-info">
+                <div class="comic-cover">
+                    <div class="cover-image" id="coverImage">COVER</div>
+                </div>
+                
+                <div class="comic-description">
+                    <h2 class="section-title">DESCRIPTION</h2>
+                    <p id="comicDesc" class="description-text">
+                        This is a sample comic description. It would contain information about the story, 
+                        characters, and plot of the comic series.
+                    </p>
+                </div>
+
+                <div class="comic-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">STATUS:</span>
+                        <span class="stat-value" id="comicStatus">ONGOING</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">CHAPTERS:</span>
+                        <span class="stat-value" id="chapterCount">1085</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">GENRE:</span>
+                        <span class="stat-value" id="comicGenre">ACTION, ADVENTURE</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapters-section">
+                <h2 class="section-title">CHAPTERS</h2>
+                <div class="chapter-controls">
+                    <button class="control-button" onclick="sortChapters('newest')">NEWEST FIRST</button>
+                    <button class="control-button" onclick="sortChapters('oldest')">OLDEST FIRST</button>
+                </div>
+                
+                <div class="chapter-list" id="chapterList">
+                    <div class="chapter-item" onclick="readChapter('1085')">
+                        <div class="chapter-info">
+                            <span class="chapter-number">Chapter 1085</span>
+                            <span class="chapter-title">The Final Battle Begins</span>
+                        </div>
+                        <div class="chapter-meta">
+                            <span class="chapter-date">2024-01-15</span>
+                            <span class="chapter-pages">24 pages</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-item" onclick="readChapter('1084')">
+                        <div class="chapter-info">
+                            <span class="chapter-number">Chapter 1084</span>
+                            <span class="chapter-title">Preparation</span>
+                        </div>
+                        <div class="chapter-meta">
+                            <span class="chapter-date">2024-01-08</span>
+                            <span class="chapter-pages">22 pages</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-item" onclick="readChapter('1083')">
+                        <div class="chapter-info">
+                            <span class="chapter-number">Chapter 1083</span>
+                            <span class="chapter-title">The Gathering</span>
+                        </div>
+                        <div class="chapter-meta">
+                            <span class="chapter-date">2024-01-01</span>
+                            <span class="chapter-pages">20 pages</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-item" onclick="readChapter('1082')">
+                        <div class="chapter-info">
+                            <span class="chapter-number">Chapter 1082</span>
+                            <span class="chapter-title">Revelations</span>
+                        </div>
+                        <div class="chapter-meta">
+                            <span class="chapter-date">2023-12-25</span>
+                            <span class="chapter-pages">26 pages</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-item" onclick="readChapter('1081')">
+                        <div class="chapter-info">
+                            <span class="chapter-number">Chapter 1081</span>
+                            <span class="chapter-title">The Truth</span>
+                        </div>
+                        <div class="chapter-meta">
+                            <span class="chapter-date">2023-12-18</span>
+                            <span class="chapter-pages">23 pages</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="load-more">
+                    <button class="load-more-button" onclick="loadMoreChapters()">LOAD MORE CHAPTERS</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Load comic details when page loads
+        window.onload = function() {
+            loadComicDetails();
+        };
+        
+        function loadComicDetails() {
+            var comicId = localStorage.getItem("selectedComic") || "one-piece";
+            var comicData = getComicData(comicId);
+            
+            document.getElementById("comicTitle").textContent = comicData.title;
+            document.getElementById("coverImage").textContent = comicData.shortTitle;
+            document.getElementById("comicDesc").textContent = comicData.description;
+            document.getElementById("comicStatus").textContent = comicData.status;
+            document.getElementById("chapterCount").textContent = comicData.chapters;
+            document.getElementById("comicGenre").textContent = comicData.genre;
+        }
+        
+        function getComicData(comicId) {
+            var comics = {
+                "one-piece": {
+                    title: "ONE PIECE",
+                    shortTitle: "OP",
+                    description: "Follow the epic journey of Monkey D. Luffy and his pirate crew as they search for the legendary One Piece treasure and become the Pirate King.",
+                    status: "ONGOING",
+                    chapters: "1085",
+                    genre: "ACTION, ADVENTURE, COMEDY"
+                },
+                "naruto": {
+                    title: "NARUTO",
+                    shortTitle: "NAR",
+                    description: "The story of Naruto Uzumaki, a young ninja who seeks to become the strongest ninja in his village and earn the respect of his peers.",
+                    status: "COMPLETED",
+                    chapters: "700",
+                    genre: "ACTION, ADVENTURE, FANTASY"
+                },
+                "dragon-ball": {
+                    title: "DRAGON BALL",
+                    shortTitle: "DB",
+                    description: "The adventures of Goku and his friends as they search for the Dragon Balls and protect Earth from various threats.",
+                    status: "COMPLETED",
+                    chapters: "519",
+                    genre: "ACTION, ADVENTURE, FANTASY"
+                },
+                "bleach": {
+                    title: "BLEACH",
+                    shortTitle: "BL",
+                    description: "Ichigo Kurosaki gains the powers of a Soul Reaper and must protect the world from evil spirits and other supernatural threats.",
+                    status: "COMPLETED",
+                    chapters: "686",
+                    genre: "ACTION, SUPERNATURAL"
+                },
+                "attack-on-titan": {
+                    title: "ATTACK ON TITAN",
+                    shortTitle: "AOT",
+                    description: "Humanity's last stand against giant humanoid creatures known as Titans in a walled city.",
+                    status: "COMPLETED",
+                    chapters: "139",
+                    genre: "ACTION, DRAMA, HORROR"
+                },
+                "my-hero-academia": {
+                    title: "MY HERO ACADEMIA",
+                    shortTitle: "MHA",
+                    description: "In a world where people have superpowers, Izuku Midoriya dreams of becoming a hero despite being born without powers.",
+                    status: "ONGOING",
+                    chapters: "400",
+                    genre: "ACTION, SUPERHERO, SCHOOL"
+                }
+            };
+            
+            return comics[comicId] || comics["one-piece"];
+        }
+        
+        function readChapter(chapterNumber) {
+            localStorage.setItem("selectedChapter", chapterNumber);
+            goToReader();
+        }
+        
+        function sortChapters(order) {
+            // Simple chapter sorting - just show an alert for demo
+            alert("Sorting chapters by: " + order);
+        }
+        
+        function loadMoreChapters() {
+            // Simple load more - just show an alert for demo
+            alert("Loading more chapters...");
+        }
+    </script>
+</body>
+</html> 

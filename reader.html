@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic Reader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="reader-container">
+        <!-- Reading Controls -->
+        <div class="reader-controls">
+            <button class="control-btn" onclick="goBack()">BACK</button>
+            <div class="chapter-info">
+                <span id="currentChapter">Chapter 1085</span>
+            </div>
+            <div class="page-controls">
+                <button class="control-btn" onclick="previousPage()">PREV</button>
+                <span id="pageInfo">Page 1 of 24</span>
+                <button class="control-btn" onclick="nextPage()">NEXT</button>
+            </div>
+        </div>
+
+        <!-- Reader Content -->
+        <div class="reader-content" id="readerContent">
+            <!-- Sample comic pages -->
+            <div class="comic-page" id="page1">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 1</h2>
+                        <p>This is where the comic page image would be displayed.</p>
+                        <p>The image would be optimized for mobile viewing with proper scaling.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page2">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 2</h2>
+                        <p>Second page of the comic chapter.</p>
+                        <p>Each page is designed for vertical scrolling.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page3">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 3</h2>
+                        <p>Third page continues the story.</p>
+                        <p>Readers can scroll down to continue reading.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page4">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 4</h2>
+                        <p>Fourth page of the chapter.</p>
+                        <p>The story progresses as you scroll down.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page5">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 5</h2>
+                        <p>Fifth page of the comic.</p>
+                        <p>More action and story development.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page6">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 6</h2>
+                        <p>Sixth page continues the narrative.</p>
+                        <p>Characters interact and plot thickens.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page7">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 7</h2>
+                        <p>Seventh page of the chapter.</p>
+                        <p>More dramatic moments unfold.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page8">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 8</h2>
+                        <p>Eighth page of the comic.</p>
+                        <p>The story reaches a climax.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page9">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 9</h2>
+                        <p>Ninth page of the chapter.</p>
+                        <p>More intense action sequences.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page10">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 10</h2>
+                        <p>Tenth page of the comic.</p>
+                        <p>The story continues to build.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page11">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 11</h2>
+                        <p>Eleventh page of the chapter.</p>
+                        <p>More character development.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page12">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 12</h2>
+                        <p>Twelfth page of the comic.</p>
+                        <p>The plot continues to unfold.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page13">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 13</h2>
+                        <p>Thirteenth page of the chapter.</p>
+                        <p>More dramatic revelations.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page14">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 14</h2>
+                        <p>Fourteenth page of the comic.</p>
+                        <p>The story reaches new heights.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page15">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 15</h2>
+                        <p>Fifteenth page of the chapter.</p>
+                        <p>More intense action.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page16">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 16</h2>
+                        <p>Sixteenth page of the comic.</p>
+                        <p>The battle continues.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page17">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 17</h2>
+                        <p>Seventeenth page of the chapter.</p>
+                        <p>More character moments.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page18">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 18</h2>
+                        <p>Eighteenth page of the comic.</p>
+                        <p>The story builds to a climax.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page19">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 19</h2>
+                        <p>Nineteenth page of the chapter.</p>
+                        <p>More dramatic developments.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page20">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 20</h2>
+                        <p>Twentieth page of the comic.</p>
+                        <p>The plot thickens further.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page21">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 21</h2>
+                        <p>Twenty-first page of the chapter.</p>
+                        <p>More revelations come to light.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page22">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 22</h2>
+                        <p>Twenty-second page of the comic.</p>
+                        <p>The story approaches its conclusion.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page23">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 23</h2>
+                        <p>Twenty-third page of the chapter.</p>
+                        <p>Penultimate page of the chapter.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comic-page" id="page24">
+                <div class="page-image">
+                    <div class="page-placeholder">
+                        <h2>PAGE 24</h2>
+                        <p>Final page of the chapter.</p>
+                        <p>Chapter conclusion and cliffhanger.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-btn" onclick="previousChapter()">PREV CHAPTER</button>
+            <button class="nav-btn" onclick="goToDetails()">CHAPTER LIST</button>
+            <button class="nav-btn" onclick="nextChapter()">NEXT CHAPTER</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        var currentPage = 1;
+        var totalPages = 24;
+        var currentChapter = "1085";
+        
+        // Load chapter info when page loads
+        window.onload = function() {
+            loadChapterInfo();
+            updatePageInfo();
+        };
+        
+        function loadChapterInfo() {
+            var chapter = localStorage.getItem("selectedChapter") || "1085";
+            currentChapter = chapter;
+            document.getElementById("currentChapter").textContent = "Chapter " + chapter;
+        }
+        
+        function updatePageInfo() {
+            document.getElementById("pageInfo").textContent = "Page " + currentPage + " of " + totalPages;
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePageInfo();
+                scrollToPage(currentPage);
+            }
+        }
+        
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePageInfo();
+                scrollToPage(currentPage);
+            }
+        }
+        
+        function scrollToPage(pageNumber) {
+            var pageElement = document.getElementById("page" + pageNumber);
+            if (pageElement) {
+                pageElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        function previousChapter() {
+            var prevChapter = parseInt(currentChapter) - 1;
+            if (prevChapter >= 1) {
+                localStorage.setItem("selectedChapter", prevChapter.toString());
+                alert("Loading Chapter " + prevChapter);
+                // In a real app, this would load the previous chapter
+            } else {
+                alert("This is the first chapter");
+            }
+        }
+        
+        function nextChapter() {
+            var nextChapter = parseInt(currentChapter) + 1;
+            localStorage.setItem("selectedChapter", nextChapter.toString());
+            alert("Loading Chapter " + nextChapter);
+            // In a real app, this would load the next chapter
+        }
+        
+        function goToDetails() {
+            window.location.href = "comic-details.html";
+        }
+        
+        // Handle scroll events to update current page
+        window.onscroll = function() {
+            var scrollPosition = window.pageYOffset;
+            var pageHeight = window.innerHeight;
+            var estimatedPage = Math.floor(scrollPosition / pageHeight) + 1;
+            
+            if (estimatedPage >= 1 && estimatedPage <= totalPages && estimatedPage !== currentPage) {
+                currentPage = estimatedPage;
+                updatePageInfo();
+            }
+        };
+    </script>
+</body>
+</html> 

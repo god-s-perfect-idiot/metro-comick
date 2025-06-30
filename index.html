@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic Reader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <span class="title">COMIC READER</span>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search comics...">
+                <button onclick="searchComics()" class="search-button">SEARCH</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="popular-section">
+                <h2 class="section-title">POPULAR SECTIONS</h2>
+                <div class="comic-grid">
+                    <div class="comic-card" onclick="goToComic('one-piece')">
+                        <div class="comic-image">OP</div>
+                        <h3 class="comic-title">ONE PIECE</h3>
+                        <p class="comic-desc">Epic pirate adventure</p>
+                    </div>
+                    <div class="comic-card" onclick="goToComic('naruto')">
+                        <div class="comic-image">NAR</div>
+                        <h3 class="comic-title">NARUTO</h3>
+                        <p class="comic-desc">Ninja world saga</p>
+                    </div>
+                    <div class="comic-card" onclick="goToComic('dragon-ball')">
+                        <div class="comic-image">DB</div>
+                        <h3 class="comic-title">DRAGON BALL</h3>
+                        <p class="comic-desc">Super Saiyan battles</p>
+                    </div>
+                    <div class="comic-card" onclick="goToComic('bleach')">
+                        <div class="comic-image">BL</div>
+                        <h3 class="comic-title">BLEACH</h3>
+                        <p class="comic-desc">Soul reaper action</p>
+                    </div>
+                    <div class="comic-card" onclick="goToComic('attack-on-titan')">
+                        <div class="comic-image">AOT</div>
+                        <h3 class="comic-title">ATTACK ON TITAN</h3>
+                        <p class="comic-desc">Humanity's last stand</p>
+                    </div>
+                    <div class="comic-card" onclick="goToComic('my-hero-academia')">
+                        <div class="comic-image">MHA</div>
+                        <h3 class="comic-title">MY HERO ACADEMIA</h3>
+                        <p class="comic-desc">Superhero training</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recent-section">
+                <h2 class="section-title">RECENTLY READ</h2>
+                <div class="recent-list">
+                    <div class="recent-item" onclick="goToComic('one-piece')">
+                        <span class="recent-title">ONE PIECE - Chapter 1085</span>
+                        <span class="recent-date">2 hours ago</span>
+                    </div>
+                    <div class="recent-item" onclick="goToComic('naruto')">
+                        <span class="recent-title">NARUTO - Chapter 700</span>
+                        <span class="recent-date">1 day ago</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

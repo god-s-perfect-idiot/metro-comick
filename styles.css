@@ -1,0 +1,598 @@
+/* Windows Phone 8.1 Metro Design */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.4;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 30rem;
+    margin: 0 auto;
+    padding: 0;
+    background-color: #000000;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: none;
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    text-align: left;
+    border-bottom: none;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.0625rem;
+    text-align: left;
+    padding-left: 0;
+}
+
+.search-container {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 0.625rem;
+    padding-left: 0;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.9375rem;
+    font-size: 1.125rem;
+    background-color: #333333;
+    border: 0.125rem solid #666666;
+    color: #ffffff;
+    border-radius: 0;
+}
+
+.search-input::placeholder {
+    color: #999999;
+}
+
+.search-button {
+    padding: 0.9375rem 1.5625rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    background-color: #0078d4;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.0625rem;
+}
+
+.search-button:hover {
+    background-color: #106ebe;
+}
+
+/* Main Content */
+.main-content {
+    padding: 0 1.5rem 0 1.5rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    text-transform: lowercase;
+    letter-spacing: 0.03125rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    text-align: left;
+    padding-left: 0;
+}
+
+/* Comic Grid */
+.comic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9375rem;
+    margin-bottom: 2.5rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.comic-card {
+    background-color: #111;
+    border: none;
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 9.375rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.comic-card:hover {
+    background-color: #222;
+    border: none;
+}
+
+.comic-image {
+    width: 3.75rem;
+    height: 3.75rem;
+    background-color: #0078d4;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.9375rem;
+    border-radius: 0;
+}
+
+.comic-title {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.comic-desc {
+    font-size: 0.875rem;
+    color: #cccccc;
+    line-height: 1.3;
+}
+
+/* Recent Section */
+.recent-section {
+    margin-top: 1.875rem;
+    margin-left: 0;
+}
+
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.recent-item {
+    background-color: #111;
+    border: none;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recent-item:hover {
+    background-color: #222;
+    border: none;
+}
+
+.recent-title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.recent-date {
+    font-size: 0.875rem;
+    color: #999999;
+}
+
+/* Comic Details Page Styles */
+.comic-info {
+    margin-bottom: 1.875rem;
+}
+
+.comic-cover {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.cover-image {
+    width: 7.5rem;
+    height: 10rem;
+    background-color: #0078d4;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 0.125rem solid #333333;
+}
+
+.description-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #cccccc;
+    margin-bottom: 1.25rem;
+}
+
+.comic-stats {
+    background-color: #1a1a1a;
+    border: 0.125rem solid #333333;
+    padding: 1.25rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9375rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 0.0625rem solid #333333;
+}
+
+.stat-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.stat-label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1rem;
+    color: #0078d4;
+    font-weight: bold;
+}
+
+/* Chapter Controls */
+.chapter-controls {
+    display: flex;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+}
+
+.control-button {
+    flex: 1;
+    padding: 0.9375rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #333333;
+    color: #ffffff;
+    border: 0.125rem solid #666666;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.control-button:hover {
+    background-color: #0078d4;
+    border-color: #0078d4;
+}
+
+/* Chapter List */
+.chapter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+}
+
+.chapter-item {
+    background-color: #1a1a1a;
+    border: 0.125rem solid #333333;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chapter-item:hover {
+    background-color: #333333;
+    border-color: #0078d4;
+}
+
+.chapter-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+    margin-bottom: 0.625rem;
+}
+
+.chapter-number {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.chapter-title {
+    font-size: 0.875rem;
+    color: #cccccc;
+}
+
+.chapter-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chapter-date {
+    font-size: 0.75rem;
+    color: #999999;
+}
+
+.chapter-pages {
+    font-size: 0.75rem;
+    color: #0078d4;
+    font-weight: bold;
+}
+
+.load-more {
+    text-align: center;
+}
+
+.load-more-button {
+    padding: 0.9375rem 1.875rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #0078d4;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.0625rem;
+}
+
+.load-more-button:hover {
+    background-color: #106ebe;
+}
+
+/* Reader Page Styles */
+.reader-container {
+    background-color: #000000;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.reader-controls {
+    background-color: #1a1a1a;
+    border-bottom: 0.125rem solid #333333;
+    padding: 0.9375rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.control-btn {
+    padding: 0.625rem 0.9375rem;
+    font-size: 0.875rem;
+    font-weight: bold;
+    background-color: #0078d4;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.control-btn:hover {
+    background-color: #106ebe;
+}
+
+.chapter-info {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.page-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.9375rem;
+}
+
+#pageInfo {
+    font-size: 1rem;
+    color: #cccccc;
+    font-weight: bold;
+}
+
+.reader-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #000000;
+}
+
+.comic-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 0.0625rem solid #333333;
+}
+
+.page-image {
+    width: 100%;
+    max-width: 25rem;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    border: 0.125rem solid #333333;
+}
+
+.page-placeholder {
+    text-align: center;
+    padding: 1.25rem;
+    color: #ffffff;
+}
+
+.page-placeholder h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.25rem;
+    color: #0078d4;
+    text-transform: uppercase;
+}
+
+.page-placeholder p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #cccccc;
+    margin-bottom: 0.625rem;
+}
+
+.bottom-nav {
+    background-color: #1a1a1a;
+    border-top: 0.125rem solid #333333;
+    padding: 0.9375rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+}
+
+.nav-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: bold;
+    background-color: #333333;
+    color: #ffffff;
+    border: 0.125rem solid #666666;
+    cursor: pointer;
+    text-transform: uppercase;
+    flex: 1;
+    margin: 0 0.3125rem;
+}
+
+.nav-btn:hover {
+    background-color: #0078d4;
+    border-color: #0078d4;
+}
+
+.nav-btn:first-child {
+    margin-left: 0;
+}
+
+.nav-btn:last-child {
+    margin-right: 0;
+}
+
+/* Navigation */
+.nav-back {
+    position: fixed;
+    top: 1.25rem;
+    left: 1.25rem;
+    background-color: #0078d4;
+    color: #ffffff;
+    border: none;
+    padding: 0.9375rem 1.25rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    z-index: 1000;
+}
+
+.nav-back:hover {
+    background-color: #106ebe;
+}
+
+/* Responsive Design */
+@media (max-width: 30rem) {
+    .comic-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .title {
+        font-size: 1.25rem;
+        padding-left: 0;
+    }
+    
+    .search-input,
+    .search-button {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .comic-card {
+        min-height: 7.5rem;
+        padding: 0.9375rem;
+    }
+    
+    .comic-title {
+        font-size: 1rem;
+    }
+    
+    .reader-controls {
+        flex-direction: column;
+        gap: 0.625rem;
+        padding: 0.625rem 0.9375rem;
+    }
+    
+    .page-controls {
+        gap: 0.625rem;
+    }
+    
+    .control-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .bottom-nav {
+        flex-direction: column;
+        gap: 0.625rem;
+    }
+    
+    .nav-btn {
+        margin: 0;
+        width: 100%;
+    }
+    
+    .chapter-controls {
+        flex-direction: column;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3125rem;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        padding-left: 0;
+    }
+    
+    .comic-grid, .recent-list {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .header {
+        padding: 1rem 0.75rem 1rem 0.75rem;
+    }
+    
+    .main-content {
+        padding: 0 0.75rem 0 0.75rem;
+    }
+    
+    .search-container {
+        padding-left: 0;
+    }
+} 
