@@ -42,29 +42,67 @@ function handleSearchKeyPress(event) {
 }
 
 // Fetch data from API
-async function fetchComicData() {
-    try {
-        showLoading();
-        
-        // Use the working CORS proxy
+function fetchComicData() {
+    showLoading();
+    
+    // Try XMLHttpRequest first (better Windows Phone compatibility)
+    if (window.XMLHttpRequest) {
+        const xhr = new XMLHttpRequest();
         const proxyUrl = 'https://corsproxy.io/?';
         const targetUrl = 'https://api.comick.io/top';
-        const response = await fetch(proxyUrl + targetUrl);
         
-        if (response.ok) {
-            apiData = await response.json();
-            populateComicSections();
-        } else {
-            throw new Error('Network response was not ok');
+        xhr.open('GET', proxyUrl + targetUrl, true);
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                hideLoading();
+                
+                if (xhr.status === 200) {
+                    try {
+                        apiData = JSON.parse(xhr.responseText);
+                        populateComicSections();
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        showError('Failed to parse data');
+                        loadSampleData();
+                    }
+                } else {
+                    console.error('XHR failed with status:', xhr.status);
+                    showError('Failed to load comic data');
+                    loadSampleData();
+                }
+            }
+        };
+        
+        xhr.onerror = function() {
+            hideLoading();
+            console.error('XHR error occurred');
+            showError('Network error occurred');
+            loadSampleData();
+        };
+        
+        // Set timeout for Windows Phone
+        xhr.timeout = 10000; // 10 seconds
+        
+        xhr.ontimeout = function() {
+            hideLoading();
+            console.error('XHR timeout');
+            showError('Request timed out');
+            loadSampleData();
+        };
+        
+        try {
+            xhr.send();
+        } catch (error) {
+            hideLoading();
+            console.error('Error sending XHR request:', error);
+            showError('Failed to send request');
+            loadSampleData();
         }
-        
+    } else {
+        // Fallback for very old browsers
         hideLoading();
-    } catch (error) {
-        console.error('Error fetching comic data:', error);
-        hideLoading();
-        showError('Failed to load comic data');
-        
-        // Fallback: Load sample data if API fails
+        console.log('XMLHttpRequest not supported, using sample data');
         loadSampleData();
     }
 }
