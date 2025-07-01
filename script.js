@@ -33,7 +33,11 @@ var proxyUrls = [
     'https://cors.bridged.cc/',
     'https://api.codetabs.com/v1/proxy?quest=',
     'https://cors.eu.org/',
-    'https://cors-anywhere.herokuapp.com/https://api.comick.io/top'
+    'https://cors-anywhere.herokuapp.com/https://api.comick.io/top',
+    // Try some more reliable proxies
+    'https://api.codetabs.com/v1/proxy?quest=https://api.comick.io/top',
+    'https://corsproxy.io/?https://api.comick.io/top',
+    'https://api.allorigins.win/raw?url=https://api.comick.io/top'
 ];
 
 // Navigation functions
@@ -64,6 +68,9 @@ function handleSearchKeyPress(event) {
 function fetchComicData() {
     showLoading();
     
+    // Try simple HTTP request first (works better on IE Mobile 11)
+    console.log('Trying simple HTTP request...');
+    
     // Create XMLHttpRequest object
     var xhr;
     if (window.XMLHttpRequest) {
@@ -78,7 +85,11 @@ function fetchComicData() {
     
     console.log('Trying proxy ' + (currentProxyIndex + 1) + ':', proxyUrls[currentProxyIndex]);
     
+    // Try with minimal headers for IE Mobile 11
     xhr.open('GET', url, true);
+    
+    // Don't set any headers - let IE Mobile 11 handle it naturally
+    // This sometimes works better than setting explicit headers
     
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
@@ -547,7 +558,7 @@ function tryJSONP() {
             if (script.parentNode) {
                 document.head.removeChild(script);
             }
-            populateEmptySections();
+            tryAlternativeMethod();
         }
     }, 10000);
     
@@ -561,8 +572,56 @@ function tryJSONP() {
     script.src = jsonpUrls[0];
     script.onerror = function() {
         console.error('JSONP script failed to load');
-        populateEmptySections();
+        tryAlternativeMethod();
     };
     
     document.head.appendChild(script);
+}
+
+// Try alternative method using iframe or different approach
+function tryAlternativeMethod() {
+    console.log('Trying alternative method...');
+    
+    // Try using an iframe to bypass CORS
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = 'https://api.comick.io/top';
+    
+    iframe.onload = function() {
+        try {
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            var response = iframeDoc.body.textContent;
+            console.log('Iframe response:', response);
+            
+            try {
+                var data = JSON.parse(response);
+                apiData = data;
+                populateComicSections();
+            } catch (e) {
+                console.error('Failed to parse iframe response:', e);
+                populateEmptySections();
+            }
+        } catch (e) {
+            console.error('Iframe access denied:', e);
+            populateEmptySections();
+        }
+        
+        document.body.removeChild(iframe);
+    };
+    
+    iframe.onerror = function() {
+        console.error('Iframe failed to load');
+        document.body.removeChild(iframe);
+        populateEmptySections();
+    };
+    
+    document.body.appendChild(iframe);
+    
+    // Remove iframe after 10 seconds if it doesn't load
+    setTimeout(function() {
+        if (iframe.parentNode) {
+            document.body.removeChild(iframe);
+            populateEmptySections();
+        }
+    }, 10000);
 } 
