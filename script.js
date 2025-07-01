@@ -30,7 +30,10 @@ var proxyUrls = [
     'https://api.allorigins.win/raw?url=',
     'https://cors-anywhere.herokuapp.com/',
     'https://thingproxy.freeboard.io/fetch/',
-    'https://cors.bridged.cc/'
+    'https://cors.bridged.cc/',
+    'https://api.codetabs.com/v1/proxy?quest=',
+    'https://cors.eu.org/',
+    'https://cors-anywhere.herokuapp.com/https://api.comick.io/top'
 ];
 
 // Navigation functions
@@ -170,8 +173,8 @@ function tryNextProxy() {
         console.log('Trying next proxy...');
         setTimeout(fetchComicData, 1000); // Wait 1 second between attempts
     } else {
-        console.log('All proxies failed, showing fallback content');
-        populateEmptySections();
+        console.log('All CORS proxies failed, trying JSONP...');
+        tryJSONP();
     }
 }
 
@@ -308,6 +311,12 @@ function populateEmptySections() {
     recentsGrid.innerHTML = '';
     topNewGrid.innerHTML = '';
     topFollowedGrid.innerHTML = '';
+    
+    // Add message for IE Mobile users about API issue
+    var message = document.createElement('div');
+    message.style.cssText = 'text-align: center; padding: 20px; color: #666; background: #f9f9f9; margin: 20px; border: 1px solid #ddd; border-radius: 5px;';
+    message.innerHTML = '<strong>API Connection Issue</strong><br>The live API may be blocked by your network or browser security settings.<br><small>This is common on older mobile browsers.</small>';
+    document.body.appendChild(message);
 }
 
 // Add event listeners when DOM is loaded - 2012 compatible
@@ -510,4 +519,50 @@ if (typeof console === 'undefined' || !console.log) {
         originalError.apply(console, arguments);
         domConsole.error(message, data);
     };
+}
+
+// Alternative approach: Try direct JSONP if CORS proxies fail
+function tryJSONP() {
+    console.log('Trying JSONP approach...');
+    
+    // Create script tag for JSONP
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    
+    // Add callback function to window
+    window.jsonpCallback = function(data) {
+        console.log('JSONP Success:', data);
+        apiData = data;
+        populateComicSections();
+        // Clean up
+        document.head.removeChild(script);
+        delete window.jsonpCallback;
+    };
+    
+    // Set timeout for JSONP
+    setTimeout(function() {
+        if (window.jsonpCallback) {
+            console.error('JSONP timeout');
+            delete window.jsonpCallback;
+            if (script.parentNode) {
+                document.head.removeChild(script);
+            }
+            populateEmptySections();
+        }
+    }, 10000);
+    
+    // Try different JSONP endpoints
+    var jsonpUrls = [
+        'https://api.comick.io/top?callback=jsonpCallback',
+        'https://api.comick.io/top?jsonp=jsonpCallback',
+        'https://api.comick.io/top?format=jsonp&callback=jsonpCallback'
+    ];
+    
+    script.src = jsonpUrls[0];
+    script.onerror = function() {
+        console.error('JSONP script failed to load');
+        populateEmptySections();
+    };
+    
+    document.head.appendChild(script);
 } 
