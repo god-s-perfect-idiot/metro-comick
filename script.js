@@ -41,11 +41,71 @@ function handleSearchKeyPress(event) {
     }
 }
 
+// Check if we're on Windows Phone
+function isWindowsPhone() {
+    return navigator.userAgent.indexOf('Windows Phone') !== -1 || 
+           navigator.userAgent.indexOf('IEMobile') !== -1 ||
+           navigator.userAgent.indexOf('WPDesktop') !== -1;
+}
+
 // Fetch data from API
 function fetchComicData() {
     showLoading();
     
-    // Try XMLHttpRequest first (better Windows Phone compatibility)
+    // For Windows Phone, try a simpler approach first
+    if (isWindowsPhone()) {
+        console.log('Windows Phone detected, using simplified approach');
+        // Try a different proxy that might work better on Windows Phone
+        const xhr = new XMLHttpRequest();
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const targetUrl = 'https://api.comick.io/top';
+        
+        xhr.open('GET', proxyUrl + targetUrl, true);
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                hideLoading();
+                
+                if (xhr.status === 200) {
+                    try {
+                        apiData = JSON.parse(xhr.responseText);
+                        populateComicSections();
+                    } catch (error) {
+                        console.error('Error parsing JSON on Windows Phone:', error);
+                        loadSampleData();
+                    }
+                } else {
+                    console.error('Windows Phone XHR failed, using sample data');
+                    loadSampleData();
+                }
+            }
+        };
+        
+        xhr.onerror = function() {
+            hideLoading();
+            console.log('Windows Phone XHR error, using sample data');
+            loadSampleData();
+        };
+        
+        xhr.timeout = 15000; // Longer timeout for Windows Phone
+        
+        xhr.ontimeout = function() {
+            hideLoading();
+            console.log('Windows Phone XHR timeout, using sample data');
+            loadSampleData();
+        };
+        
+        try {
+            xhr.send();
+        } catch (error) {
+            hideLoading();
+            console.log('Windows Phone XHR send error, using sample data');
+            loadSampleData();
+        }
+        return;
+    }
+    
+    // For other devices, try XMLHttpRequest first (better Windows Phone compatibility)
     if (window.XMLHttpRequest) {
         const xhr = new XMLHttpRequest();
         const proxyUrl = 'https://corsproxy.io/?';
