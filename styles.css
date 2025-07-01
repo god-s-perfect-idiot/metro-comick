@@ -126,7 +126,6 @@ body {
 
 .comic-card {
     border: none;
-    padding: 0.5rem;
     text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
