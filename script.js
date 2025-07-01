@@ -22,23 +22,6 @@ if (typeof JSON === 'undefined' || !JSON.parse) {
 
 // Global variables to store API data
 var apiData = null;
-var currentProxyIndex = 0;
-
-// Multiple CORS proxy options for IE Mobile 11
-var proxyUrls = [
-    'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url=',
-    'https://cors-anywhere.herokuapp.com/',
-    'https://thingproxy.freeboard.io/fetch/',
-    'https://cors.bridged.cc/',
-    'https://api.codetabs.com/v1/proxy?quest=',
-    'https://cors.eu.org/',
-    'https://cors-anywhere.herokuapp.com/https://api.comick.io/top',
-    // Try some more reliable proxies
-    'https://api.codetabs.com/v1/proxy?quest=https://api.comick.io/top',
-    'https://corsproxy.io/?https://api.comick.io/top',
-    'https://api.allorigins.win/raw?url=https://api.comick.io/top'
-];
 
 // Navigation functions
 function goToComic(comicId) {
@@ -64,12 +47,11 @@ function handleSearchKeyPress(event) {
     }
 }
 
-// Fetch data from API using CORS proxy - 2012 compatible
+// Fetch data from API directly - 2012 compatible
 function fetchComicData() {
     showLoading();
     
-    // Try direct API call first (works better on IE Mobile 11)
-    console.log('Trying direct API call...');
+    console.log('Fetching API data directly...');
     
     // Create XMLHttpRequest object
     var xhr;
@@ -80,114 +62,8 @@ function fetchComicData() {
         xhr = new ActiveXObject("Microsoft.XMLHTTP");
     }
     
-    // Try direct API call first
-    var directUrl = 'https://api.comick.io/top';
-    console.log('Trying direct API call to:', directUrl);
-    
-    xhr.open('GET', directUrl, true);
-    
-    // Don't set any headers - let IE Mobile 11 handle it naturally
-    // This sometimes works better than setting explicit headers
-    
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            console.log('Direct API - XHR Status:', xhr.status);
-            console.log('Direct API - XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
-            console.log('Direct API - XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
-            
-            if (xhr.status === 200) {
-                hideLoading();
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    console.log('Direct API - JSON Parse Success:', response);
-                    if (response && response.error) {
-                        console.error('Direct API - API Error:', response.error);
-                        tryCorsProxies();
-                    } else {
-                        apiData = response;
-                        populateComicSections();
-                    }
-                } catch (error) {
-                    console.error('Direct API - Error parsing JSON:', error);
-                    console.error('Direct API - Raw response text:', xhr.responseText);
-                    // Try fallback parsing for IE Mobile 11
-                    try {
-                        var response = eval('(' + xhr.responseText + ')');
-                        console.log('Direct API - Fallback Parse Success:', response);
-                        if (response && response.error) {
-                            console.error('Direct API - API Error:', response.error);
-                            tryCorsProxies();
-                        } else {
-                            apiData = response;
-                            populateComicSections();
-                        }
-                    } catch (fallbackError) {
-                        console.error('Direct API - Fallback parsing also failed:', fallbackError);
-                        console.error('Direct API - Raw response text for fallback:', xhr.responseText);
-                        tryCorsProxies();
-                    }
-                }
-            } else if (xhr.status === 0) {
-                console.error('Direct API - CORS blocked (status 0) - trying CORS proxies');
-                tryCorsProxies();
-            } else {
-                console.error('Direct API - XHR failed with status:', xhr.status);
-                console.error('Direct API - XHR Status Text:', xhr.statusText);
-                tryCorsProxies();
-            }
-        }
-    };
-    
-    xhr.onerror = function() {
-        console.error('Direct API - XHR error occurred');
-        console.error('Direct API - XHR Status:', xhr.status);
-        console.error('Direct API - XHR Status Text:', xhr.statusText);
-        console.error('Direct API - XHR Response Text:', xhr.responseText);
-        tryCorsProxies();
-    };
-    
-    // Set timeout for older browsers
-    if (xhr.timeout !== undefined) {
-        xhr.timeout = 30000; // 30 seconds for very slow connections
-    }
-    
-    if (xhr.ontimeout !== undefined) {
-        xhr.ontimeout = function() {
-            console.error('Direct API - XHR timeout');
-            console.error('Direct API - XHR Status:', xhr.status);
-            console.error('Direct API - XHR Response Text:', xhr.responseText);
-            tryCorsProxies();
-        };
-    }
-    
-    try {
-        console.log('Sending direct API request to:', directUrl);
-        xhr.send();
-    } catch (error) {
-        console.error('Direct API - Error sending XHR request:', error);
-        console.error('Direct API - XHR Status:', xhr.status);
-        console.error('Direct API - XHR Response Text:', xhr.responseText);
-        tryCorsProxies();
-    }
-}
-
-// Try CORS proxies if direct API fails
-function tryCorsProxies() {
-    console.log('Trying CORS proxies...');
-    
-    // Create XMLHttpRequest object
-    var xhr;
-    if (window.XMLHttpRequest) {
-        xhr = new XMLHttpRequest();
-    } else {
-        // For very old IE
-        xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    
-    var targetUrl = 'https://api.comick.io/top';
-    var url = proxyUrls[currentProxyIndex] + targetUrl;
-    
-    console.log('Trying proxy ' + (currentProxyIndex + 1) + ':', proxyUrls[currentProxyIndex]);
+    var url = 'https://api.comick.io/top';
+    console.log('Requesting:', url);
     
     xhr.open('GET', url, true);
     
@@ -195,97 +71,51 @@ function tryCorsProxies() {
         if (xhr.readyState === 4) {
             hideLoading();
             
-            console.log('Proxy - XHR Status:', xhr.status);
-            console.log('Proxy - XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
-            console.log('Proxy - XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
+            console.log('XHR Status:', xhr.status);
+            console.log('Response Length:', xhr.responseText ? xhr.responseText.length : 'null');
             
             if (xhr.status === 200) {
                 try {
                     var response = JSON.parse(xhr.responseText);
-                    console.log('Proxy - JSON Parse Success:', response);
-                    if (response && response.error) {
-                        console.error('Proxy - API Error:', response.error);
-                        tryNextProxy();
-                    } else {
-                        apiData = response;
-                        populateComicSections();
-                    }
+                    console.log('API Success:', response);
+                    apiData = response;
+                    populateComicSections();
                 } catch (error) {
-                    console.error('Proxy - Error parsing JSON:', error);
-                    console.error('Proxy - Raw response text:', xhr.responseText);
-                    // Try fallback parsing for IE Mobile 11
-                    try {
-                        var response = eval('(' + xhr.responseText + ')');
-                        console.log('Proxy - Fallback Parse Success:', response);
-                        if (response && response.error) {
-                            console.error('Proxy - API Error:', response.error);
-                            tryNextProxy();
-                        } else {
-                            apiData = response;
-                            populateComicSections();
-                        }
-                    } catch (fallbackError) {
-                        console.error('Proxy - Fallback parsing also failed:', fallbackError);
-                        console.error('Proxy - Raw response text for fallback:', xhr.responseText);
-                        tryNextProxy();
-                    }
+                    console.error('JSON Parse Error:', error);
+                    populateEmptySections();
                 }
-            } else if (xhr.status === 0) {
-                console.error('Proxy - CORS blocked (status 0) - trying next proxy');
-                tryNextProxy();
             } else {
-                console.error('Proxy - XHR failed with status:', xhr.status);
-                console.error('Proxy - XHR Status Text:', xhr.statusText);
-                tryNextProxy();
+                console.error('HTTP Error:', xhr.status);
+                populateEmptySections();
             }
         }
     };
     
     xhr.onerror = function() {
         hideLoading();
-        console.error('Proxy - XHR error occurred');
-        console.error('Proxy - XHR Status:', xhr.status);
-        console.error('Proxy - XHR Status Text:', xhr.statusText);
-        console.error('Proxy - XHR Response Text:', xhr.responseText);
-        tryNextProxy();
+        console.error('XHR Error');
+        populateEmptySections();
     };
     
-    // Set timeout for older browsers
+    // Set timeout
     if (xhr.timeout !== undefined) {
-        xhr.timeout = 30000; // 30 seconds for very slow connections
+        xhr.timeout = 30000;
     }
     
     if (xhr.ontimeout !== undefined) {
         xhr.ontimeout = function() {
             hideLoading();
-            console.error('Proxy - XHR timeout');
-            console.error('Proxy - XHR Status:', xhr.status);
-            console.error('Proxy - XHR Response Text:', xhr.responseText);
-            tryNextProxy();
+            console.error('XHR Timeout');
+            populateEmptySections();
         };
     }
     
     try {
-        console.log('Sending proxy request to:', url);
         xhr.send();
     } catch (error) {
         hideLoading();
-        console.error('Proxy - Error sending XHR request:', error);
-        console.error('Proxy - XHR Status:', xhr.status);
-        console.error('Proxy - XHR Response Text:', xhr.responseText);
-        tryNextProxy();
-    }
-}
-
-// Try next proxy if current one fails
-function tryNextProxy() {
-    currentProxyIndex++;
-    if (currentProxyIndex < proxyUrls.length) {
-        console.log('Trying next proxy...');
-        setTimeout(fetchComicData, 1000); // Wait 1 second between attempts
-    } else {
-        console.log('All CORS proxies failed, trying JSONP...');
-        tryJSONP();
+        console.error('Send Error:', error);
+        populateEmptySections();
     }
 }
 
@@ -630,98 +460,4 @@ if (typeof console === 'undefined' || !console.log) {
         originalError.apply(console, arguments);
         domConsole.error(message, data);
     };
-}
-
-// Alternative approach: Try direct JSONP if CORS proxies fail
-function tryJSONP() {
-    console.log('Trying JSONP approach...');
-    
-    // Create script tag for JSONP
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    
-    // Add callback function to window
-    window.jsonpCallback = function(data) {
-        console.log('JSONP Success:', data);
-        apiData = data;
-        populateComicSections();
-        // Clean up
-        document.head.removeChild(script);
-        delete window.jsonpCallback;
-    };
-    
-    // Set timeout for JSONP
-    setTimeout(function() {
-        if (window.jsonpCallback) {
-            console.error('JSONP timeout');
-            delete window.jsonpCallback;
-            if (script.parentNode) {
-                document.head.removeChild(script);
-            }
-            tryAlternativeMethod();
-        }
-    }, 10000);
-    
-    // Try different JSONP endpoints
-    var jsonpUrls = [
-        'https://api.comick.io/top?callback=jsonpCallback',
-        'https://api.comick.io/top?jsonp=jsonpCallback',
-        'https://api.comick.io/top?format=jsonp&callback=jsonpCallback'
-    ];
-    
-    script.src = jsonpUrls[0];
-    script.onerror = function() {
-        console.error('JSONP script failed to load');
-        tryAlternativeMethod();
-    };
-    
-    document.head.appendChild(script);
-}
-
-// Try alternative method using iframe or different approach
-function tryAlternativeMethod() {
-    console.log('Trying alternative method...');
-    
-    // Try using an iframe to bypass CORS
-    var iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = 'https://api.comick.io/top';
-    
-    iframe.onload = function() {
-        try {
-            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            var response = iframeDoc.body.textContent;
-            console.log('Iframe response:', response);
-            
-            try {
-                var data = JSON.parse(response);
-                apiData = data;
-                populateComicSections();
-            } catch (e) {
-                console.error('Failed to parse iframe response:', e);
-                populateEmptySections();
-            }
-        } catch (e) {
-            console.error('Iframe access denied:', e);
-            populateEmptySections();
-        }
-        
-        document.body.removeChild(iframe);
-    };
-    
-    iframe.onerror = function() {
-        console.error('Iframe failed to load');
-        document.body.removeChild(iframe);
-        populateEmptySections();
-    };
-    
-    document.body.appendChild(iframe);
-    
-    // Remove iframe after 10 seconds if it doesn't load
-    setTimeout(function() {
-        if (iframe.parentNode) {
-            document.body.removeChild(iframe);
-            populateEmptySections();
-        }
-    }, 10000);
 } 
