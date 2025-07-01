@@ -28,12 +28,16 @@ body {
     padding: 1rem 1.5rem 1rem 1.5rem;
     text-align: left;
     border-bottom: none;
+    display: flex;
+    align-items: start;
+    width: 100%;
+    flex-direction: column;
 }
 
 .title {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 300;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 0.0625rem;
@@ -46,6 +50,7 @@ body {
     gap: 0.625rem;
     margin-top: 0.625rem;
     padding-left: 0;
+    width: 100%;
 }
 
 .search-input {
@@ -110,26 +115,22 @@ body {
 }
 
 .comic-card {
-    background-color: #111;
     border: none;
-    padding: 1.25rem;
-    text-align: center;
+    padding: 0.5rem;
+    text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 9.375rem;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 1rem;
 }
 
-.comic-card:hover {
-    background-color: #222;
-    border: none;
-}
 
 .comic-image {
-    width: 3.75rem;
-    height: 3.75rem;
+    width: 6rem;
+    height: 6rem;
     background-color: #0078d4;
     color: #ffffff;
     font-size: 1.25rem;
@@ -137,8 +138,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 0.9375rem;
     border-radius: 0;
+}
+
+.comic-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 0.5rem;
 }
 
 .comic-title {
@@ -523,7 +531,7 @@ body {
     }
     
     .title {
-        font-size: 1.25rem;
+        font-size: 1rem;
         padding-left: 0;
     }
     
@@ -533,10 +541,6 @@ body {
         padding: 0.75rem;
     }
     
-    .comic-card {
-        min-height: 7.5rem;
-        padding: 0.9375rem;
-    }
     
     .comic-title {
         font-size: 1rem;
