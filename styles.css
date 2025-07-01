@@ -147,12 +147,11 @@ body {
     justify-content: center;
     border-radius: 0;
     margin-right: 1rem;
-    width: 30%;
 }
 
 .comic-title-container {
+    width: calc(100% - 6rem);
     display: flex;
-    width: 70%;
     flex-direction: column;
     justify-content: start;
     align-items: start;

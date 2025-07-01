@@ -68,8 +68,112 @@ function handleSearchKeyPress(event) {
 function fetchComicData() {
     showLoading();
     
-    // Try simple HTTP request first (works better on IE Mobile 11)
-    console.log('Trying simple HTTP request...');
+    // Try direct API call first (works better on IE Mobile 11)
+    console.log('Trying direct API call...');
+    
+    // Create XMLHttpRequest object
+    var xhr;
+    if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+    } else {
+        // For very old IE
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    
+    // Try direct API call first
+    var directUrl = 'https://api.comick.io/top';
+    console.log('Trying direct API call to:', directUrl);
+    
+    xhr.open('GET', directUrl, true);
+    
+    // Don't set any headers - let IE Mobile 11 handle it naturally
+    // This sometimes works better than setting explicit headers
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            console.log('Direct API - XHR Status:', xhr.status);
+            console.log('Direct API - XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
+            console.log('Direct API - XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
+            
+            if (xhr.status === 200) {
+                hideLoading();
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    console.log('Direct API - JSON Parse Success:', response);
+                    if (response && response.error) {
+                        console.error('Direct API - API Error:', response.error);
+                        tryCorsProxies();
+                    } else {
+                        apiData = response;
+                        populateComicSections();
+                    }
+                } catch (error) {
+                    console.error('Direct API - Error parsing JSON:', error);
+                    console.error('Direct API - Raw response text:', xhr.responseText);
+                    // Try fallback parsing for IE Mobile 11
+                    try {
+                        var response = eval('(' + xhr.responseText + ')');
+                        console.log('Direct API - Fallback Parse Success:', response);
+                        if (response && response.error) {
+                            console.error('Direct API - API Error:', response.error);
+                            tryCorsProxies();
+                        } else {
+                            apiData = response;
+                            populateComicSections();
+                        }
+                    } catch (fallbackError) {
+                        console.error('Direct API - Fallback parsing also failed:', fallbackError);
+                        console.error('Direct API - Raw response text for fallback:', xhr.responseText);
+                        tryCorsProxies();
+                    }
+                }
+            } else if (xhr.status === 0) {
+                console.error('Direct API - CORS blocked (status 0) - trying CORS proxies');
+                tryCorsProxies();
+            } else {
+                console.error('Direct API - XHR failed with status:', xhr.status);
+                console.error('Direct API - XHR Status Text:', xhr.statusText);
+                tryCorsProxies();
+            }
+        }
+    };
+    
+    xhr.onerror = function() {
+        console.error('Direct API - XHR error occurred');
+        console.error('Direct API - XHR Status:', xhr.status);
+        console.error('Direct API - XHR Status Text:', xhr.statusText);
+        console.error('Direct API - XHR Response Text:', xhr.responseText);
+        tryCorsProxies();
+    };
+    
+    // Set timeout for older browsers
+    if (xhr.timeout !== undefined) {
+        xhr.timeout = 30000; // 30 seconds for very slow connections
+    }
+    
+    if (xhr.ontimeout !== undefined) {
+        xhr.ontimeout = function() {
+            console.error('Direct API - XHR timeout');
+            console.error('Direct API - XHR Status:', xhr.status);
+            console.error('Direct API - XHR Response Text:', xhr.responseText);
+            tryCorsProxies();
+        };
+    }
+    
+    try {
+        console.log('Sending direct API request to:', directUrl);
+        xhr.send();
+    } catch (error) {
+        console.error('Direct API - Error sending XHR request:', error);
+        console.error('Direct API - XHR Status:', xhr.status);
+        console.error('Direct API - XHR Response Text:', xhr.responseText);
+        tryCorsProxies();
+    }
+}
+
+// Try CORS proxies if direct API fails
+function tryCorsProxies() {
+    console.log('Trying CORS proxies...');
     
     // Create XMLHttpRequest object
     var xhr;
@@ -85,57 +189,53 @@ function fetchComicData() {
     
     console.log('Trying proxy ' + (currentProxyIndex + 1) + ':', proxyUrls[currentProxyIndex]);
     
-    // Try with minimal headers for IE Mobile 11
     xhr.open('GET', url, true);
-    
-    // Don't set any headers - let IE Mobile 11 handle it naturally
-    // This sometimes works better than setting explicit headers
     
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             hideLoading();
             
-            console.log('XHR Status:', xhr.status);
-            console.log('XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
-            console.log('XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
+            console.log('Proxy - XHR Status:', xhr.status);
+            console.log('Proxy - XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
+            console.log('Proxy - XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
             
             if (xhr.status === 200) {
                 try {
                     var response = JSON.parse(xhr.responseText);
-                    console.log('JSON Parse Success:', response);
+                    console.log('Proxy - JSON Parse Success:', response);
                     if (response && response.error) {
-                        console.error('API Error:', response.error);
+                        console.error('Proxy - API Error:', response.error);
                         tryNextProxy();
                     } else {
                         apiData = response;
                         populateComicSections();
                     }
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                    console.error('Raw response text:', xhr.responseText);
+                    console.error('Proxy - Error parsing JSON:', error);
+                    console.error('Proxy - Raw response text:', xhr.responseText);
                     // Try fallback parsing for IE Mobile 11
                     try {
                         var response = eval('(' + xhr.responseText + ')');
-                        console.log('Fallback Parse Success:', response);
+                        console.log('Proxy - Fallback Parse Success:', response);
                         if (response && response.error) {
-                            console.error('API Error:', response.error);
+                            console.error('Proxy - API Error:', response.error);
                             tryNextProxy();
                         } else {
                             apiData = response;
                             populateComicSections();
                         }
                     } catch (fallbackError) {
-                        console.error('Fallback parsing also failed:', fallbackError);
-                        console.error('Raw response text for fallback:', xhr.responseText);
+                        console.error('Proxy - Fallback parsing also failed:', fallbackError);
+                        console.error('Proxy - Raw response text for fallback:', xhr.responseText);
                         tryNextProxy();
                     }
                 }
             } else if (xhr.status === 0) {
-                console.error('CORS blocked (status 0) - trying next proxy');
+                console.error('Proxy - CORS blocked (status 0) - trying next proxy');
                 tryNextProxy();
             } else {
-                console.error('XHR failed with status:', xhr.status);
-                console.error('XHR Status Text:', xhr.statusText);
+                console.error('Proxy - XHR failed with status:', xhr.status);
+                console.error('Proxy - XHR Status Text:', xhr.statusText);
                 tryNextProxy();
             }
         }
@@ -143,10 +243,10 @@ function fetchComicData() {
     
     xhr.onerror = function() {
         hideLoading();
-        console.error('XHR error occurred');
-        console.error('XHR Status:', xhr.status);
-        console.error('XHR Status Text:', xhr.statusText);
-        console.error('XHR Response Text:', xhr.responseText);
+        console.error('Proxy - XHR error occurred');
+        console.error('Proxy - XHR Status:', xhr.status);
+        console.error('Proxy - XHR Status Text:', xhr.statusText);
+        console.error('Proxy - XHR Response Text:', xhr.responseText);
         tryNextProxy();
     };
     
@@ -158,21 +258,21 @@ function fetchComicData() {
     if (xhr.ontimeout !== undefined) {
         xhr.ontimeout = function() {
             hideLoading();
-            console.error('XHR timeout');
-            console.error('XHR Status:', xhr.status);
-            console.error('XHR Response Text:', xhr.responseText);
+            console.error('Proxy - XHR timeout');
+            console.error('Proxy - XHR Status:', xhr.status);
+            console.error('Proxy - XHR Response Text:', xhr.responseText);
             tryNextProxy();
         };
     }
     
     try {
-        console.log('Sending XHR request to:', url);
+        console.log('Sending proxy request to:', url);
         xhr.send();
     } catch (error) {
         hideLoading();
-        console.error('Error sending XHR request:', error);
-        console.error('XHR Status:', xhr.status);
-        console.error('XHR Response Text:', xhr.responseText);
+        console.error('Proxy - Error sending XHR request:', error);
+        console.error('Proxy - XHR Status:', xhr.status);
+        console.error('Proxy - XHR Response Text:', xhr.responseText);
         tryNextProxy();
     }
 }
