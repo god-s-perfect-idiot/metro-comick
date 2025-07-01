@@ -70,9 +70,14 @@ function fetchComicData() {
         if (xhr.readyState === 4) {
             hideLoading();
             
+            console.log('XHR Status:', xhr.status);
+            console.log('XHR Response Text Length:', xhr.responseText ? xhr.responseText.length : 'null');
+            console.log('XHR Response Text (first 500 chars):', xhr.responseText ? xhr.responseText.substring(0, 500) : 'null');
+            
             if (xhr.status === 200) {
                 try {
                     var response = JSON.parse(xhr.responseText);
+                    console.log('JSON Parse Success:', response);
                     if (response && response.error) {
                         console.error('API Error:', response.error);
                         populateEmptySections();
@@ -82,9 +87,11 @@ function fetchComicData() {
                     }
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
+                    console.error('Raw response text:', xhr.responseText);
                     // Try fallback parsing for IE Mobile 11
                     try {
                         var response = eval('(' + xhr.responseText + ')');
+                        console.log('Fallback Parse Success:', response);
                         if (response && response.error) {
                             console.error('API Error:', response.error);
                             populateEmptySections();
@@ -94,11 +101,13 @@ function fetchComicData() {
                         }
                     } catch (fallbackError) {
                         console.error('Fallback parsing also failed:', fallbackError);
+                        console.error('Raw response text for fallback:', xhr.responseText);
                         populateEmptySections();
                     }
                 }
             } else {
                 console.error('XHR failed with status:', xhr.status);
+                console.error('XHR Status Text:', xhr.statusText);
                 populateEmptySections();
             }
         }
@@ -107,6 +116,9 @@ function fetchComicData() {
     xhr.onerror = function() {
         hideLoading();
         console.error('XHR error occurred');
+        console.error('XHR Status:', xhr.status);
+        console.error('XHR Status Text:', xhr.statusText);
+        console.error('XHR Response Text:', xhr.responseText);
         populateEmptySections();
     };
     
@@ -119,17 +131,34 @@ function fetchComicData() {
         xhr.ontimeout = function() {
             hideLoading();
             console.error('XHR timeout');
+            console.error('XHR Status:', xhr.status);
+            console.error('XHR Response Text:', xhr.responseText);
             populateEmptySections();
         };
     }
     
     try {
+        console.log('Sending XHR request to:', url);
         xhr.send();
     } catch (error) {
         hideLoading();
         console.error('Error sending XHR request:', error);
+        console.error('XHR Status:', xhr.status);
+        console.error('XHR Response Text:', xhr.responseText);
         populateEmptySections();
     }
+
+    // Debug: Show API response for troubleshooting
+    var debugDiv = document.createElement('div');
+    debugDiv.style.cssText = 'padding: 20px; margin: 20px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 300px; overflow: auto;';
+    
+    var debugInfo = 'API Response Debug:\n';
+    debugInfo += 'API Data: ' + (apiData ? JSON.stringify(apiData, null, 2) : 'null') + '\n\n';
+    debugInfo += 'Raw Response Text: ' + (typeof xhr !== 'undefined' && xhr.responseText ? xhr.responseText.substring(0, 1000) : 'not available') + '\n\n';
+    debugInfo += 'Check browser console for detailed error logs.';
+    
+    debugDiv.innerHTML = debugInfo;
+    document.body.appendChild(debugDiv);
 }
 
 // Populate comic sections with API data - 2012 compatible
@@ -195,12 +224,6 @@ function populateComicSections() {
         var comicCard = createComicCard(topFollowedComics[i]);
         topFollowedGrid.appendChild(comicCard);
     }
-    
-    // Debug: Show API response for troubleshooting
-    var debugDiv = document.createElement('div');
-    debugDiv.style.cssText = 'padding: 20px; margin: 20px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 300px; overflow: auto;';
-    debugDiv.innerHTML = 'API Response Debug:\n' + JSON.stringify(apiData, null, 2);
-    document.body.appendChild(debugDiv);
 }
 
 // Create a comic card element - 2012 compatible
@@ -397,4 +420,80 @@ if (window.addEventListener) {
             }, 500);
         }
     });
+}
+
+// DOM Console for IE Mobile 11 (no browser console)
+var domConsole = {
+    logs: [],
+    maxLogs: 50,
+    
+    log: function(message, data) {
+        this.addLog('LOG', message, data);
+    },
+    
+    error: function(message, data) {
+        this.addLog('ERROR', message, data);
+    },
+    
+    addLog: function(type, message, data) {
+        var logEntry = {
+            type: type,
+            message: message,
+            data: data,
+            timestamp: new Date().toLocaleTimeString()
+        };
+        
+        this.logs.push(logEntry);
+        
+        // Keep only last 50 logs
+        if (this.logs.length > this.maxLogs) {
+            this.logs.shift();
+        }
+        
+        this.updateDisplay();
+    },
+    
+    updateDisplay: function() {
+        var consoleDiv = document.getElementById('dom-console');
+        if (!consoleDiv) {
+            consoleDiv = document.createElement('div');
+            consoleDiv.id = 'dom-console';
+            consoleDiv.style.cssText = 'position: fixed; bottom: 0; left: 0; right: 0; background: #000; color: #fff; font-family: monospace; font-size: 10px; padding: 10px; max-height: 200px; overflow-y: auto; z-index: 10000; border-top: 2px solid #333;';
+            document.body.appendChild(consoleDiv);
+        }
+        
+        var html = '<div style="margin-bottom: 5px; font-weight: bold;">DOM Console Logs:</div>';
+        for (var i = 0; i < this.logs.length; i++) {
+            var log = this.logs[i];
+            var color = log.type === 'ERROR' ? '#ff6b6b' : '#4ecdc4';
+            html += '<div style="margin: 2px 0; color: ' + color + ';">[' + log.timestamp + '] ' + log.type + ': ' + log.message;
+            if (log.data !== undefined) {
+                html += ' - ' + (typeof log.data === 'object' ? JSON.stringify(log.data) : String(log.data));
+            }
+            html += '</div>';
+        }
+        consoleDiv.innerHTML = html;
+    }
+};
+
+// Override console methods for IE Mobile 11
+if (typeof console === 'undefined' || !console.log) {
+    window.console = {
+        log: function(message, data) { domConsole.log(message, data); },
+        error: function(message, data) { domConsole.error(message, data); },
+        warn: function(message, data) { domConsole.log('WARN: ' + message, data); },
+        info: function(message, data) { domConsole.log('INFO: ' + message, data); }
+    };
+} else {
+    // Keep original console but also log to DOM
+    var originalLog = console.log;
+    var originalError = console.error;
+    console.log = function(message, data) {
+        originalLog.apply(console, arguments);
+        domConsole.log(message, data);
+    };
+    console.error = function(message, data) {
+        originalError.apply(console, arguments);
+        domConsole.error(message, data);
+    };
 } 
