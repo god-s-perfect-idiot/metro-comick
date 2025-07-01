@@ -195,6 +195,12 @@ function populateComicSections() {
         var comicCard = createComicCard(topFollowedComics[i]);
         topFollowedGrid.appendChild(comicCard);
     }
+    
+    // Debug: Show API response for troubleshooting
+    var debugDiv = document.createElement('div');
+    debugDiv.style.cssText = 'padding: 20px; margin: 20px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 300px; overflow: auto;';
+    debugDiv.innerHTML = 'API Response Debug:\n' + JSON.stringify(apiData, null, 2);
+    document.body.appendChild(debugDiv);
 }
 
 // Create a comic card element - 2012 compatible
