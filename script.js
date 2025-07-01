@@ -1,5 +1,25 @@
 // Minimal JavaScript for 2012-era browser compatibility
 
+// JSON polyfill for IE Mobile 11 (2012)
+if (typeof JSON === 'undefined' || !JSON.parse) {
+    window.JSON = {
+        parse: function(text) {
+            try {
+                return eval('(' + text + ')');
+            } catch (e) {
+                throw new Error('Invalid JSON');
+            }
+        },
+        stringify: function(obj) {
+            // Basic stringify for IE Mobile 11
+            if (typeof obj === 'string') return '"' + obj.replace(/"/g, '\\"') + '"';
+            if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+            if (obj === null) return 'null';
+            return 'null';
+        }
+    };
+}
+
 // Global variables to store API data
 var apiData = null;
 
@@ -62,7 +82,20 @@ function fetchComicData() {
                     }
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
-                    populateEmptySections();
+                    // Try fallback parsing for IE Mobile 11
+                    try {
+                        var response = eval('(' + xhr.responseText + ')');
+                        if (response && response.error) {
+                            console.error('API Error:', response.error);
+                            populateEmptySections();
+                        } else {
+                            apiData = response;
+                            populateComicSections();
+                        }
+                    } catch (fallbackError) {
+                        console.error('Fallback parsing also failed:', fallbackError);
+                        populateEmptySections();
+                    }
                 }
             } else {
                 console.error('XHR failed with status:', xhr.status);
@@ -259,6 +292,23 @@ if (document.addEventListener) {
     });
 }
 
+// Fallback for IE Mobile 11 if DOM ready events don't fire
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(function() {
+        var searchInput = document.getElementById("searchInput");
+        if (searchInput && !searchInput.onkeypress) {
+            if (searchInput.addEventListener) {
+                searchInput.addEventListener("keypress", handleSearchKeyPress);
+            } else if (searchInput.attachEvent) {
+                searchInput.attachEvent("onkeypress", handleSearchKeyPress);
+            }
+        }
+        if (!apiData) {
+            fetchComicData();
+        }
+    }, 100);
+}
+
 // Simple page loading indicator
 function showLoading() {
     var loading = document.createElement("div");
@@ -291,22 +341,54 @@ function showError(message) {
 
 // Check if we're on a mobile device (basic detection) - 2012 compatible
 function isMobile() {
-    return window.innerWidth <= 768;
+    // IE Mobile 11 detection for 2012
+    var userAgent = navigator.userAgent || navigator.appVersion || '';
+    var isIEMobile = /IEMobile/i.test(userAgent);
+    var isWindowsPhone = /Windows Phone/i.test(userAgent);
+    var isMobileWidth = window.innerWidth <= 768;
+    
+    return isIEMobile || isWindowsPhone || isMobileWidth;
 }
 
 // Handle orientation changes - 2012 compatible
 if (window.addEventListener) {
     window.addEventListener("orientationchange", function() {
-        // Reload page on orientation change for better compatibility
-        setTimeout(function() {
-            window.location.reload();
-        }, 500);
+        // For IE Mobile 11, use a gentler approach
+        if (isMobile()) {
+            // Just refresh layout instead of full reload
+            setTimeout(function() {
+                var body = document.body;
+                if (body) {
+                    body.style.display = 'none';
+                    setTimeout(function() {
+                        body.style.display = '';
+                    }, 10);
+                }
+            }, 100);
+        } else {
+            // Reload page on orientation change for better compatibility
+            setTimeout(function() {
+                window.location.reload();
+            }, 500);
+        }
     });
 } else if (window.attachEvent) {
     // For very old IE
     window.attachEvent("onorientationchange", function() {
-        setTimeout(function() {
-            window.location.reload();
-        }, 500);
+        if (isMobile()) {
+            setTimeout(function() {
+                var body = document.body;
+                if (body) {
+                    body.style.display = 'none';
+                    setTimeout(function() {
+                        body.style.display = '';
+                    }, 10);
+                }
+            }, 100);
+        } else {
+            setTimeout(function() {
+                window.location.reload();
+            }, 500);
+        }
     });
 } 
