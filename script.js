@@ -22,6 +22,16 @@ if (typeof JSON === 'undefined' || !JSON.parse) {
 
 // Global variables to store API data
 var apiData = null;
+var currentProxyIndex = 0;
+
+// Multiple CORS proxy options for IE Mobile 11
+var proxyUrls = [
+    'https://corsproxy.io/?',
+    'https://api.allorigins.win/raw?url=',
+    'https://cors-anywhere.herokuapp.com/',
+    'https://thingproxy.freeboard.io/fetch/',
+    'https://cors.bridged.cc/'
+];
 
 // Navigation functions
 function goToComic(comicId) {
@@ -60,9 +70,10 @@ function fetchComicData() {
         xhr = new ActiveXObject("Microsoft.XMLHTTP");
     }
     
-    var proxyUrl = 'https://corsproxy.io/?';
     var targetUrl = 'https://api.comick.io/top';
-    var url = proxyUrl + targetUrl;
+    var url = proxyUrls[currentProxyIndex] + targetUrl;
+    
+    console.log('Trying proxy ' + (currentProxyIndex + 1) + ':', proxyUrls[currentProxyIndex]);
     
     xhr.open('GET', url, true);
     
@@ -80,7 +91,7 @@ function fetchComicData() {
                     console.log('JSON Parse Success:', response);
                     if (response && response.error) {
                         console.error('API Error:', response.error);
-                        populateEmptySections();
+                        tryNextProxy();
                     } else {
                         apiData = response;
                         populateComicSections();
@@ -94,7 +105,7 @@ function fetchComicData() {
                         console.log('Fallback Parse Success:', response);
                         if (response && response.error) {
                             console.error('API Error:', response.error);
-                            populateEmptySections();
+                            tryNextProxy();
                         } else {
                             apiData = response;
                             populateComicSections();
@@ -102,13 +113,16 @@ function fetchComicData() {
                     } catch (fallbackError) {
                         console.error('Fallback parsing also failed:', fallbackError);
                         console.error('Raw response text for fallback:', xhr.responseText);
-                        populateEmptySections();
+                        tryNextProxy();
                     }
                 }
+            } else if (xhr.status === 0) {
+                console.error('CORS blocked (status 0) - trying next proxy');
+                tryNextProxy();
             } else {
                 console.error('XHR failed with status:', xhr.status);
                 console.error('XHR Status Text:', xhr.statusText);
-                populateEmptySections();
+                tryNextProxy();
             }
         }
     };
@@ -119,7 +133,7 @@ function fetchComicData() {
         console.error('XHR Status:', xhr.status);
         console.error('XHR Status Text:', xhr.statusText);
         console.error('XHR Response Text:', xhr.responseText);
-        populateEmptySections();
+        tryNextProxy();
     };
     
     // Set timeout for older browsers
@@ -133,7 +147,7 @@ function fetchComicData() {
             console.error('XHR timeout');
             console.error('XHR Status:', xhr.status);
             console.error('XHR Response Text:', xhr.responseText);
-            populateEmptySections();
+            tryNextProxy();
         };
     }
     
@@ -145,20 +159,20 @@ function fetchComicData() {
         console.error('Error sending XHR request:', error);
         console.error('XHR Status:', xhr.status);
         console.error('XHR Response Text:', xhr.responseText);
+        tryNextProxy();
+    }
+}
+
+// Try next proxy if current one fails
+function tryNextProxy() {
+    currentProxyIndex++;
+    if (currentProxyIndex < proxyUrls.length) {
+        console.log('Trying next proxy...');
+        setTimeout(fetchComicData, 1000); // Wait 1 second between attempts
+    } else {
+        console.log('All proxies failed, showing fallback content');
         populateEmptySections();
     }
-
-    // Debug: Show API response for troubleshooting
-    var debugDiv = document.createElement('div');
-    debugDiv.style.cssText = 'padding: 20px; margin: 20px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 300px; overflow: auto;';
-    
-    var debugInfo = 'API Response Debug:\n';
-    debugInfo += 'API Data: ' + (apiData ? JSON.stringify(apiData, null, 2) : 'null') + '\n\n';
-    debugInfo += 'Raw Response Text: ' + (typeof xhr !== 'undefined' && xhr.responseText ? xhr.responseText.substring(0, 1000) : 'not available') + '\n\n';
-    debugInfo += 'Check browser console for detailed error logs.';
-    
-    debugDiv.innerHTML = debugInfo;
-    document.body.appendChild(debugDiv);
 }
 
 // Populate comic sections with API data - 2012 compatible
